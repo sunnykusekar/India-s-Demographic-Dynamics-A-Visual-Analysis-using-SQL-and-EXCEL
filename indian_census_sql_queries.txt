@@ -1,0 +1,198 @@
+-- number of rows present in the dataset
+SELECT 
+    COUNT(*)
+FROM
+    dataset1
+
+
+-- selecting records from perticuler 
+
+create view sunny as
+ (SELECT 
+    *
+FROM
+    dataset1
+WHERE
+    state IN ('Maharashtra'))
+
+
+-- calculate total pupulation of each state and list them in order of highest ppopulation and lowest population
+SELECT 
+    sum(dataset2.Population) AS total_population, dataset2.State
+FROM
+    dataset2
+GROUP BY dataset2.State
+ORDER BY total_population DESC;
+
+
+
+-- average growth of india in %
+
+SELECT 
+    round(AVG(Growth)*100,3) AS average_growth_of_india
+FROM
+    dataset1
+
+
+
+
+-- average sex ratio of india in %
+
+SELECT 
+    ROUND(AVG(Sex_Ratio), 3) AS average_sex_ratio_of_india
+FROM
+    dataset1
+
+
+
+
+--  avverage % of the growth by state
+
+CREATE VIEW total_growth AS
+    SELECT 
+        ROUND(AVG(Growth) * 100, 3) AS average_growth_per, state
+    FROM
+        dataset1
+    GROUP BY state;
+ 
+SELECT 
+    *
+FROM
+    total_growth;
+
+
+
+
+-- calculate top 10 average of the sex ratios by each state in india in percentage
+
+SELECT 
+    round(AVG(Sex_Ratio),0) AS average_sex_ratio,
+    state
+FROM
+    dataset1
+    
+GROUP BY state
+-- having state='Maharashtra'
+ORDER BY average_sex_ratio DESC
+limit 10;
+
+
+
+--  calculate averagte litaracy rate more than 90 using having clouse
+
+SELECT 
+    AVG(Literacy) as avg_litaracy, state
+FROM
+    dataset1
+GROUP BY state
+HAVING avg_litaracy > 90
+ORDER BY avg_litaracy DESC
+
+
+
+--  top 3 state by the average growth
+
+SELECT 
+    ROUND(AVG(Growth) * 100, 3) AS average_growth_per, state
+FROM
+    dataset1
+GROUP BY state
+ORDER BY average_growth_per DESC
+LIMIT 3;
+
+
+
+-- bottom 3 state of india by the average growth
+
+ SELECT 
+    ROUND(AVG(Growth) * 100, 3) AS average_growth_per, state
+FROM
+    dataset1
+GROUP BY state
+ORDER BY average_growth_per DESC
+limit 3
+offset 32;
+
+
+
+-- Write an SQL query to list all districts along with their state, population, and literacy rate
+
+SELECT
+    dataset1.district,
+    dataset1.state,
+    dataset1.Literacy,
+    dataset2.population
+FROM
+    dataset1
+        JOIN
+    dataset2 ON dataset1.District = dataset2.District
+    order by     dataset2.population
+desc
+
+
+
+-- Find all districts in Dataset1 that don't have corresponding entries in Dataset2.
+-- check the null cells
+
+SELECT 
+    dataset1.district, dataset2.state
+FROM
+    dataset1
+        LEFT JOIN
+    dataset2 ON dataset1.district = dataset2.district
+    where dataset2.district is null
+
+
+
+--  Write an SQL query to find the total population, average growth rate, and total area for each state.
+
+SELECT 
+    d1.state,
+    SUM(d2.population) AS population_sum,
+    ROUND(AVG(d1.growth) * 100, 0) AS growth_rate,
+    SUM(d2.Area_km2) AS total_area
+FROM
+    dataset1 AS d1
+        JOIN
+    dataset2 AS d2 ON d1.District = d2.District
+GROUP BY state
+
+
+
+-- Find districts where the population density (Population/Area) exceeds 1000 people per km².
+
+SELECT 
+    d2.state,
+    d2.district,
+    d2.Population / d2.Area_km2 AS population_density
+FROM
+    dataset2 AS d2
+WHERE
+    d2.Population / d2.Area_km2 > 1000
+ORDER BY population_density DESC
+
+
+
+
+-- Identify if there is any correlation between literacy rate and population size in different districts.
+SELECT 
+    d1.District,
+    d1.State,
+    d1.Literacy,
+    d2.Population
+FROM 
+    Dataset1 d1
+INNER JOIN 
+    Dataset2 d2
+ON 
+    d1.District = d2.District AND d1.State = d2.State;
+
+
+
+
+
+
+
+
+
+
